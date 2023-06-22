@@ -26,6 +26,8 @@ import {
     REVIEW_STEP,
 } from './config/constants';
 import ChangeLang from './components/ChangeLang';
+import { useLocalStorage } from './hooks/localStorage';
+import Address from './forms/address';
 
 function renderStepContent({
     step,
@@ -70,16 +72,7 @@ function renderStepContent({
 
         case ADDRESS_STEP: {
             // const { accounting } = state;
-            return (
-                <></>
-                //   <AccountingForm
-                //     accounting={accounting}
-                //     activeStep={step}
-                //     isLastStep={isLastStep}
-                //     handleBack={handleBack}
-                //     setActiveStep={setActiveStep}
-                //   />
-            );
+            return <Address />;
         }
 
         //   case REVIEW_STEP:
@@ -105,7 +98,12 @@ const BasicFormValidation = (props: any) => {
         t('form.navigation.address'),
     ];
 
+    const [step1] = useLocalStorage('step1', '');
     const { activeStep, setActiveStep } = useContext(NavigationContext);
+
+    // if (step1) {
+    //     setActiveStep(1);
+    // }
 
     const isLastStep = activeStep === steps.length - 1;
 

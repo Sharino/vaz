@@ -23,13 +23,21 @@ import React, { useContext } from 'react';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import { NavigationContext } from '../../contexts/navigation';
 import FormikMuiDatePicker from '../../components/FormikMuiDatePicker';
+import dayjs from 'dayjs';
+import { useLocalStorage } from '../../hooks/localStorage';
+import {
+    DELIVERY_TYPE_OTHER,
+    DELIVERY_TYPE_RELOCATION,
+    DELIVERY_TYPE_SMALL,
+    DELIVERY_TYPE_TRANSPORT,
+} from '../../config/constants';
 
 const SUPPORTED_FORMATS = ['image/jpeg', 'image/jpg', 'image/png'];
 const FILE_SIZE = 524288;
 const phoneNumberRegEx = /^[0-1]{2}[0-9]{9}/;
 const PasswordRegEx = /^.*((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
 //1. Define the min date. we format the date to YYYY-MM-DD to exclude the time.
-//  const minPublishDate = dayjs().add(2, "day").format("YYYY-MM-DD");
+const minPublishDate = dayjs().format('YYYY-MM-DD');
 
 const requiredMsg = 'Required';
 const badDateMsg = 'Date should be in the future';
@@ -38,12 +46,12 @@ const YupValidation = yup.object().shape({
     type: yup.string().required(requiredMsg),
     pickupDate: yup
         .date()
-        .min(0, badDateMsg)
+        .min(minPublishDate, badDateMsg)
         // .max(30, 'Too Long !')
         .required(requiredMsg),
     deliveryDate: yup
         .date()
-        .min(0, badDateMsg)
+        .min(minPublishDate, badDateMsg)
         // .max(30, 'Too Long !')
         .required(requiredMsg),
     // email: yup
@@ -101,6 +109,7 @@ const FormField = ({ label, children }: { label: string; children: any }) => {
 
 const PrivateClientFormComponent = (props: any) => {
     const { t } = props;
+    const [data, setData] = useLocalStorage('step1', '');
     const { activeStep, setActiveStep } = useContext(NavigationContext);
 
     const [isPickupDateFlexible, setIsPickupDateFlexible] = React.useState(
@@ -109,60 +118,52 @@ const PrivateClientFormComponent = (props: any) => {
     const [isDeliveryDateFlexible, setIsDeliveryDateFlexible] = React.useState(
         false
     );
-    const [datePFlexibility, setDatePFlexibility] = React.useState('');
-    const [dateDFlexibility, setDateDFlexibility] = React.useState('');
 
     const deliverType = [
         {
-            key: 'small',
+            key: DELIVERY_TYPE_SMALL,
             title: t('form.deliveryType.small'),
         },
         {
-            key: 'relocation',
+            key: DELIVERY_TYPE_RELOCATION,
             title: t('form.deliveryType.relocation'),
         },
         {
-            key: 'transport',
+            key: DELIVERY_TYPE_TRANSPORT,
             title: t('form.deliveryType.transport'),
         },
         {
-            key: 'other',
+            key: DELIVERY_TYPE_OTHER,
             title: t('form.deliveryType.other'),
         },
     ];
-
-    // move to separate component
-    const handlePickupFlexibleDateChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setIsPickupDateFlexible(event.target.checked);
-        if (!event.target.checked) {
-            setDatePFlexibility('');
-        }
-    };
 
     const handleDeliveryFlexibleDateChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         setIsDeliveryDateFlexible(event.target.checked);
-        if (!event.target.checked) {
-            setDateDFlexibility('');
-        }
+        // if (!event.target.checked) {
+        //     setDateDFlexibility('');
+        // }
     };
 
-    const handleHowMuchDateIsFlexibleChange = (event: SelectChangeEvent) => {
-        setDateDFlexibility(event.target.value as string);
-    };
-
+    // const initialValue = {
+    //     type: undefined,
+    //     pickupDate: undefined,
+    //     pickupDateFlexible: undefined,
+    //     deliveryDate: undefined,
+    //     deliveryDateFlexible: undefined,
+    // };
     const initialValue = {
-        type: undefined,
-        pickupDate: undefined,
-        deliveryDate: undefined,
+        type: DELIVERY_TYPE_SMALL,
+        pickupDate: dayjs(),
+        pickupDateFlexible: undefined,
+        deliveryDate: dayjs(),
+        deliveryDateFlexible: undefined,
     };
 
     const handleSubmit = (values: any, props: any) => {
-        // alert(JSON.stringify(values));
-
+        setData(JSON.stringify(values));
         setActiveStep(1);
         // props.resetForm();
     };
@@ -173,10 +174,21 @@ const PrivateClientFormComponent = (props: any) => {
                 initialValues={initialValue}
                 validationSchema={YupValidation}
                 onSubmit={handleSubmit}
+                validateOnChange={false}
+                // validateOnBlur={false}
             >
                 {(props: FormikProps<any>) => {
-                    console.log(props);
-                    const { type, pickupDate, deliveryDate } = props.values;
+                    const {
+                        type,
+                        pickupDate,
+                        pickupDateFlexible,
+                        deliveryDate,
+                        deliveryDateFlexible,
+                    } = props.values;
+
+                    // if (data) {
+                    //     props.setValues(JSON.parse(data));
+                    // }
 
                     return (
                         <Form>
@@ -200,14 +212,17 @@ const PrivateClientFormComponent = (props: any) => {
                                         label={t('form.deliveryType.label')}
                                         value={type}
                                         onChange={val =>
-                                            props.setFieldValue('type', val)
+                                            props.setFieldValue(
+                                                'type',
+                                                val.target.value
+                                            )
                                         }
                                         error={!!props.errors.type}
                                     >
                                         {deliverType?.map(type => (
                                             <MenuItem
                                                 key={type.key}
-                                                value={type.title}
+                                                value={type.key}
                                             >
                                                 {type.title}
                                             </MenuItem>
@@ -249,8 +264,10 @@ const PrivateClientFormComponent = (props: any) => {
                                                 !pickupDate ||
                                                 !!props.errors.pickupDate
                                             }
-                                            onChange={
-                                                handlePickupFlexibleDateChange
+                                            onChange={e =>
+                                                setIsPickupDateFlexible(
+                                                    e.target.checked
+                                                )
                                             }
                                             inputProps={{
                                                 'aria-label': 'controlled',
@@ -278,12 +295,15 @@ const PrivateClientFormComponent = (props: any) => {
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            value={datePFlexibility}
+                                            value={pickupDateFlexible}
                                             label={t(
                                                 'form.tab.private.flexibleDayAmount'
                                             )}
-                                            onChange={
-                                                handleHowMuchDateIsFlexibleChange
+                                            onChange={val =>
+                                                props.setFieldValue(
+                                                    'pickupDateFlexible',
+                                                    val.target.value
+                                                )
                                             }
                                         >
                                             <MenuItem value={1}>
@@ -378,12 +398,15 @@ const PrivateClientFormComponent = (props: any) => {
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            value={dateDFlexibility}
+                                            value={deliveryDateFlexible}
                                             label={t(
                                                 'form.tab.private.flexibleDayAmount'
                                             )}
-                                            onChange={
-                                                handleHowMuchDateIsFlexibleChange
+                                            onChange={val =>
+                                                props.setFieldValue(
+                                                    'deliveryDateFlexible',
+                                                    val.target.value
+                                                )
                                             }
                                         >
                                             <MenuItem value={1}>

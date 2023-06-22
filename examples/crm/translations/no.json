@@ -2,8 +2,8 @@
     "form": {
         "title": "Get an offer for relocation assistance",
         "navigation": {
-            "general": "General settings",
-            "load": "Load details",
+            "general": "General",
+            "load": "Package",
             "address": "Address",
             "back": "Back",
             "next": "Next"

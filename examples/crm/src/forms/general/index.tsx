@@ -44,9 +44,9 @@ const GeneralForm = ({ t }: any) => {
 
     return (
         <>
-            <Typography variant="h5" textAlign="center">
+            {/* <Typography variant="h5" textAlign="center">
                 {t('form.title')}
-            </Typography>
+            </Typography> */}
 
             <Box sx={{ width: '100%' }}>
                 <Box

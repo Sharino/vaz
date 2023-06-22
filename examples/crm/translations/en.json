@@ -1,12 +1,13 @@
 {
     "general": {
-        "language": "Language"
+        "language": "Language",
+        "shortDescription": "Short description"
     },
     "form": {
         "title": "Get an offer for relocation assistance",
         "navigation": {
-            "general": "General settings",
-            "load": "Load details",
+            "general": "General",
+            "load": "Package",
             "address": "Address",
             "back": "Back",
             "next": "Next"
