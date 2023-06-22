@@ -76,7 +76,8 @@ const GeneralForm = ({ t }: any) => {
                     <Private />
                 </TabPanel>
                 <TabPanel value={formType} index={1}>
-                    <Company />
+                    <Private />
+                    {/* <Company /> */}
                 </TabPanel>
             </Box>
         </>
