@@ -22,20 +22,27 @@ import { withTranslation } from 'react-i18next';
 import React, { useContext } from 'react';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import { NavigationContext } from '../../contexts/navigation';
+import FormikMuiDatePicker from '../../components/FormikMuiDatePicker';
 
 const SUPPORTED_FORMATS = ['image/jpeg', 'image/jpg', 'image/png'];
 const FILE_SIZE = 524288;
 const phoneNumberRegEx = /^[0-1]{2}[0-9]{9}/;
 const PasswordRegEx = /^.*((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
 
+const requiredMsg = 'Required';
+const badDateMsg = 'Date should be in the future';
 const YupValidation = yup.object().shape({
-    type: yup.string().required('Required'),
-    date: yup
+    type: yup.string().required(requiredMsg),
+    pickupDate: yup
         .date()
-        // .min(3, 'Too Short !')
+        .min(0, badDateMsg)
         // .max(30, 'Too Long !')
-        .required('Required'),
-
+        .required(requiredMsg),
+    deliveryDate: yup
+        .date()
+        .min(0, badDateMsg)
+        // .max(30, 'Too Long !')
+        .required(requiredMsg),
     // email: yup
     //     .string()
     //     .email('Enter a Vaid Email')
@@ -158,7 +165,8 @@ const PrivateClientFormComponent = (props: any) => {
     };
 
     const initialValue = {
-        date: '',
+        pickupDate: '',
+        deliveryDate: '',
     };
 
     const handleSubmit = (values: any, props: any) => {
@@ -178,7 +186,7 @@ const PrivateClientFormComponent = (props: any) => {
             >
                 {(props: FormikProps<any>) => {
                     console.log(props);
-                    const { type, date } = props.values;
+                    const { type, pickupDate, deliveryDate } = props.values;
 
                     return (
                         <Form>
@@ -217,20 +225,21 @@ const PrivateClientFormComponent = (props: any) => {
                             <FormField
                                 label={t('form.tab.private.desiredPickupDate')}
                             >
-                                <DateField
+                                <FormikMuiDatePicker name="pickupDate" />
+                                {/* <DateField
                                     size="small"
                                     name="date"
                                     sx={{ width: '100%' }}
                                     label={t('form.tab.private.date')}
                                     onChange={val =>
-                                        props.setFieldValue('date', val)
+                                        props.setFieldValue('pickupDate', val)
                                     }
                                     slotProps={{
                                         textField: {
-                                            helperText: props.errors.date,
+                                            helperText: props.errors.pickupDate,
                                         },
                                     }}
-                                />
+                                /> */}
                             </FormField>
 
                             <FormGroup sx={{ mb: 1 }}>
@@ -238,6 +247,10 @@ const PrivateClientFormComponent = (props: any) => {
                                     control={
                                         <Checkbox
                                             checked={isPickupDateFlexible}
+                                            disabled={
+                                                !pickupDate ||
+                                                !!props.errors.pickupDate
+                                            }
                                             onChange={
                                                 handlePickupFlexibleDateChange
                                             }
