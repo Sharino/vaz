@@ -1,0 +1,37 @@
+{
+    "form": {
+        "title": "Get an offer for relocation assistance",
+        "navigation": {
+            "general": "General settings",
+            "load": "Load details",
+            "address": "Address",
+            "back": "Back",
+            "next": "Next"
+        },
+        "deliveryType": {
+            "label": "Hvilken type last trenger du å frakte?",
+            "small": "Liten last",
+            "relocation": "Flytting",
+            "transport": "MC, ATV eller lignende kjøretøy",
+            "other": "Annet"
+        },
+        "tab": {
+            "private": {
+                "title": "Private",
+                "date": "Date",
+                "desiredPickupDate": "Foretrukket hentedato",
+                "isPickupDateFlexible": "Er datoen fleksibel?",
+                "desiredDeliveryDate": "Foretrukket leveringsdato",
+                "isDeliveryDateFlexible": "Er datoen fleksibel?",
+                "howMuchFlexible": "Specify how flexible you are, based on selected date.",
+                "flexibleDayAmount": "Day amount",
+                "isPackingNecesery": "Do you want the moving agency to pack the items?",
+
+                "dateTo": "Date to"
+            },
+            "company": {
+                "title": "Company"
+            }
+        }
+    }
+}

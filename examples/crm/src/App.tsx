@@ -1,37 +1,57 @@
-import * as React from 'react';
-import { Admin, Resource, ListGuesser, defaultTheme } from 'react-admin';
-import { dataProvider } from './dataProvider';
-import { authProvider } from './authProvider';
-import Layout from './Layout';
-import contacts from './contacts';
-import companies from './companies';
-import deals from './deals';
-import { Dashboard } from './dashboard/Dashboard';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-const App = () => (
-    <Admin
-        dataProvider={dataProvider}
-        authProvider={authProvider}
-        layout={Layout}
-        dashboard={Dashboard}
-        theme={{
-            ...defaultTheme,
-            palette: {
-                background: {
-                    default: '#fafafb',
-                },
-            },
-        }}
-    >
-        <Resource name="deals" {...deals} />
-        <Resource name="contacts" {...contacts} />
-        <Resource name="companies" {...companies} />
-        <Resource name="contactNotes" />
-        <Resource name="dealNotes" />
-        <Resource name="tasks" list={ListGuesser} />
-        <Resource name="sales" list={ListGuesser} />
-        <Resource name="tags" list={ListGuesser} />
-    </Admin>
-);
+import StoreAdmin from './StoreAdmin';
+import StoreFront from './StoreFront';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
+import theme from './theme';
+import common_en from '../translations/en.json';
+import common_no from '../translations/no.json';
+import { useState } from 'react';
+import { NavigationContext } from './contexts/navigation';
+
+i18next.init({
+    interpolation: { escapeValue: false }, // React already does escaping
+    lng: 'en', // language to use
+    resources: {
+        en: {
+            common: common_en, // 'common' is our custom namespace
+        },
+        no: {
+            common: common_no,
+        },
+    },
+});
+
+const App = () => {
+    const [activeStep, setActiveStep] = useState(0);
+
+    return (
+        <ThemeProvider theme={theme}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <I18nextProvider i18n={i18next}>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <NavigationContext.Provider
+                                        value={{ activeStep, setActiveStep }}
+                                    >
+                                        <StoreFront />
+                                    </NavigationContext.Provider>
+                                }
+                            />
+                            <Route path="/admin/*" element={<StoreAdmin />} />
+                        </Routes>
+                    </BrowserRouter>
+                </I18nextProvider>
+            </LocalizationProvider>
+        </ThemeProvider>
+    );
+};
 
 export default App;

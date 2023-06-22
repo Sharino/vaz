@@ -1,0 +1,40 @@
+{
+    "general": {
+        "language": "Language"
+    },
+    "form": {
+        "title": "Get an offer for relocation assistance",
+        "navigation": {
+            "general": "General settings",
+            "load": "Load details",
+            "address": "Address",
+            "back": "Back",
+            "next": "Next"
+        },
+        "deliveryType": {
+            "label": "What type of cargo do you need to transport?",
+            "small": "Small items",
+            "relocation": "Relocation assistance",
+            "transport": "MC, ATV and simillar",
+            "other": "Other"
+        },
+        "tab": {
+            "private": {
+                "title": "Private",
+                "date": "Date",
+                "desiredPickupDate": "Desired pickup date",
+                "isPickupDateFlexible": "Is pickup date flexible?",
+                "desiredDeliveryDate": "Desired delivery date",
+                "isDeliveryDateFlexible": "Is delivery date flexible?",
+                "howMuchFlexible": "Specify how flexible you are, based on selected date.",
+                "flexibleDayAmount": "Day amount",
+                "isPackingNecesery": "Do you want the moving agency to pack the items?",
+
+                "dateTo": "Date to"
+            },
+            "company": {
+                "title": "Company"
+            }
+        }
+    }
+}
