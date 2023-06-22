@@ -28,9 +28,12 @@ const SUPPORTED_FORMATS = ['image/jpeg', 'image/jpg', 'image/png'];
 const FILE_SIZE = 524288;
 const phoneNumberRegEx = /^[0-1]{2}[0-9]{9}/;
 const PasswordRegEx = /^.*((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
+//1. Define the min date. we format the date to YYYY-MM-DD to exclude the time.
+//  const minPublishDate = dayjs().add(2, "day").format("YYYY-MM-DD");
 
 const requiredMsg = 'Required';
 const badDateMsg = 'Date should be in the future';
+
 const YupValidation = yup.object().shape({
     type: yup.string().required(requiredMsg),
     pickupDate: yup
@@ -100,7 +103,6 @@ const PrivateClientFormComponent = (props: any) => {
     const { t } = props;
     const { activeStep, setActiveStep } = useContext(NavigationContext);
 
-    const [value, setValue] = React.useState(0);
     const [isPickupDateFlexible, setIsPickupDateFlexible] = React.useState(
         false
     );
@@ -109,12 +111,6 @@ const PrivateClientFormComponent = (props: any) => {
     );
     const [datePFlexibility, setDatePFlexibility] = React.useState('');
     const [dateDFlexibility, setDateDFlexibility] = React.useState('');
-
-    const [isPackingNecessery, setPackingIsNecessery] = React.useState(false);
-
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
 
     const deliverType = [
         {
@@ -158,19 +154,13 @@ const PrivateClientFormComponent = (props: any) => {
         setDateDFlexibility(event.target.value as string);
     };
 
-    const handlePackingIsNecesseryChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setPackingIsNecessery(event.target.checked);
-    };
-
     const initialValue = {
-        pickupDate: '',
-        deliveryDate: '',
+        type: undefined,
+        pickupDate: undefined,
+        deliveryDate: undefined,
     };
 
     const handleSubmit = (values: any, props: any) => {
-        console.log(values);
         // alert(JSON.stringify(values));
 
         setActiveStep(1);
@@ -209,7 +199,10 @@ const PrivateClientFormComponent = (props: any) => {
                                         id="route-side-select"
                                         label={t('form.deliveryType.label')}
                                         value={type}
-                                        onChange={props.handleChange}
+                                        onChange={val =>
+                                            props.setFieldValue('type', val)
+                                        }
+                                        error={!!props.errors.type}
                                     >
                                         {deliverType?.map(type => (
                                             <MenuItem
@@ -220,6 +213,11 @@ const PrivateClientFormComponent = (props: any) => {
                                             </MenuItem>
                                         ))}
                                     </Select>
+                                    {props.errors.type && (
+                                        <FormHelperText error>
+                                            {props.errors.type}
+                                        </FormHelperText>
+                                    )}
                                 </FormControl>
                             </Box>
                             <FormField
@@ -322,20 +320,7 @@ const PrivateClientFormComponent = (props: any) => {
                                     'form.tab.private.desiredDeliveryDate'
                                 )}
                             >
-                                <DateField
-                                    size="small"
-                                    name="date"
-                                    sx={{ width: '100%' }}
-                                    label={t('form.tab.private.date')}
-                                    onChange={val =>
-                                        props.setFieldValue('date', val)
-                                    }
-                                    slotProps={{
-                                        textField: {
-                                            helperText: props.errors.date,
-                                        },
-                                    }}
-                                />
+                                <FormikMuiDatePicker name="deliveryDate" />
                             </FormField>
 
                             {/* <Field
@@ -366,6 +351,10 @@ const PrivateClientFormComponent = (props: any) => {
                                             inputProps={{
                                                 'aria-label': 'controlled',
                                             }}
+                                            disabled={
+                                                !deliveryDate ||
+                                                !!props.errors.deliveryDate
+                                            }
                                         />
                                     }
                                     label={t(

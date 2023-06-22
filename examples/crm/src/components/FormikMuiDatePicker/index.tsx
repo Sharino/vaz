@@ -21,15 +21,14 @@ const FormikMuiDatePicker = <TDate,>({ name, ...props }: Props<TDate>) => {
                 onChange={val => {
                     setFieldValue(name, val);
                 }}
+                slotProps={{
+                    textField: {
+                        size: 'small',
+                        helperText: meta.error,
+                        error: !!meta.error,
+                    },
+                }}
             />
-            {/* Show an error message if there's any */}
-            {meta.error && (
-                <label className="label">
-                    <span className="label-text-alt text-error">
-                        {meta.error}
-                    </span>
-                </label>
-            )}
         </div>
     );
 };
