@@ -1,9 +1,8 @@
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
-import StoreAdmin from './StoreAdmin';
 import StoreFront from './StoreFront';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
@@ -12,6 +11,8 @@ import common_en from '../translations/en.json';
 import common_no from '../translations/no.json';
 import { useState } from 'react';
 import { NavigationContext } from './contexts/navigation';
+
+const StoreAdmin = React.lazy(() => import('./StoreAdmin'));
 
 i18next.init({
     interpolation: { escapeValue: false }, // React already does escaping

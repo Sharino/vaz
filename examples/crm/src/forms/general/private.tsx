@@ -109,14 +109,16 @@ const FormField = ({ label, children }: { label: string; children: any }) => {
 
 const PrivateClientFormComponent = (props: any) => {
     const { t } = props;
-    const [data, setData] = useLocalStorage('step1', '');
+    const [step1, setStep1] = useLocalStorage('step1', '');
     const { activeStep, setActiveStep } = useContext(NavigationContext);
 
+    const [data, setData] = React.useState(JSON.parse(step1 || '{}'));
+
     const [isPickupDateFlexible, setIsPickupDateFlexible] = React.useState(
-        false
+        !!data.pickupDateFlexible
     );
     const [isDeliveryDateFlexible, setIsDeliveryDateFlexible] = React.useState(
-        false
+        !!data.deliveryDateFlexible
     );
 
     const deliverType = [
@@ -138,15 +140,6 @@ const PrivateClientFormComponent = (props: any) => {
         },
     ];
 
-    const handleDeliveryFlexibleDateChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setIsDeliveryDateFlexible(event.target.checked);
-        // if (!event.target.checked) {
-        //     setDateDFlexibility('');
-        // }
-    };
-
     // const initialValue = {
     //     type: undefined,
     //     pickupDate: undefined,
@@ -155,15 +148,25 @@ const PrivateClientFormComponent = (props: any) => {
     //     deliveryDateFlexible: undefined,
     // };
     const initialValue = {
-        type: DELIVERY_TYPE_SMALL,
-        pickupDate: dayjs(),
-        pickupDateFlexible: undefined,
-        deliveryDate: dayjs(),
-        deliveryDateFlexible: undefined,
+        type: data.type || DELIVERY_TYPE_SMALL,
+        pickupDate: dayjs(data.pickupDate) || dayjs(),
+        pickupDateFlexible: data.pickupDateFlexible || undefined,
+        deliveryDate: dayjs(data.deliveryDate) || dayjs(),
+        deliveryDateFlexible: data.deliveryDateFlexible || undefined,
     };
 
     const handleSubmit = (values: any, props: any) => {
-        setData(JSON.stringify(values));
+        setStep1(
+            JSON.stringify({
+                ...values,
+                pickupDateFlexible: isPickupDateFlexible
+                    ? values.pickupDateFlexible
+                    : undefined,
+                deliveryDateFlexible: isDeliveryDateFlexible
+                    ? values.deliveryDateFlexible
+                    : undefined,
+            })
+        );
         setActiveStep(1);
         // props.resetForm();
     };
@@ -189,6 +192,7 @@ const PrivateClientFormComponent = (props: any) => {
                     // if (data) {
                     //     props.setValues(JSON.parse(data));
                     // }
+                    console.log(props.values);
 
                     return (
                         <Form>
@@ -259,7 +263,7 @@ const PrivateClientFormComponent = (props: any) => {
                                 <FormControlLabel
                                     control={
                                         <Checkbox
-                                            checked={isPickupDateFlexible}
+                                            checked={!!isPickupDateFlexible}
                                             disabled={
                                                 !pickupDate ||
                                                 !!props.errors.pickupDate
@@ -280,7 +284,7 @@ const PrivateClientFormComponent = (props: any) => {
                                 />
                             </FormGroup>
 
-                            {isPickupDateFlexible && (
+                            {!!isPickupDateFlexible && (
                                 <FormField
                                     label={t(
                                         'form.tab.private.howMuchFlexible'
@@ -364,9 +368,11 @@ const PrivateClientFormComponent = (props: any) => {
                                 <FormControlLabel
                                     control={
                                         <Checkbox
-                                            checked={isDeliveryDateFlexible}
-                                            onChange={
-                                                handleDeliveryFlexibleDateChange
+                                            checked={!!isDeliveryDateFlexible}
+                                            onChange={e =>
+                                                setIsDeliveryDateFlexible(
+                                                    e.target.checked
+                                                )
                                             }
                                             inputProps={{
                                                 'aria-label': 'controlled',
@@ -383,7 +389,7 @@ const PrivateClientFormComponent = (props: any) => {
                                 />
                             </FormGroup>
 
-                            {isDeliveryDateFlexible && (
+                            {!!isDeliveryDateFlexible && (
                                 <FormField
                                     label={t(
                                         'form.tab.private.howMuchFlexible'

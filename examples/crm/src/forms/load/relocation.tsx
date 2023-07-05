@@ -48,8 +48,10 @@ const YupValidation = (t: any) =>
 
 const LoadFormComponent = (props: any) => {
     const { t } = props;
-    const [data, setData] = useLocalStorage('step1', '');
+    const [step2, setStep2] = useLocalStorage('step2', '');
     const { setActiveStep } = useContext(NavigationContext);
+
+    const [data, setData] = useState(JSON.parse(step2));
 
     const houseTypes = [
         {
@@ -63,23 +65,25 @@ const LoadFormComponent = (props: any) => {
     ];
 
     const initialValue = {
-        description: '',
-        loadDescription: '',
-        houseType: '',
-        isElevator: '',
-        onWhichFloorNeedsToBePicked: '',
-        howFarCarCanBeParkedPickup: '',
-        wouldYouBeAbleToHelpToLoadTheCarPickup: '',
-        onWhichFloorNeedsToBeDelivered: '',
-        howFarCarCanBeParkedDelivered: '',
-        wouldYouBeAbleToHelpToLoadTheCarDelivered: '',
+        description: data.description || '',
+        loadDescription: data.loadDescription || '',
+        houseType: data.houseType || '',
+        isElevator: data.isElevator || '',
+        onWhichFloorNeedsToBePicked: data.onWhichFloorNeedsToBePicked || '',
+        howFarCarCanBeParkedPickup: data.howFarCarCanBeParkedPickup || '',
+        wouldYouBeAbleToHelpToLoadTheCarPickup:
+            data.wouldYouBeAbleToHelpToLoadTheCarPickup || '',
+        onWhichFloorNeedsToBeDelivered:
+            data.onWhichFloorNeedsToBeDelivered || '',
+        howFarCarCanBeParkedDelivered: data.howFarCarCanBeParkedDelivered || '',
+        wouldYouBeAbleToHelpToLoadTheCarDelivered:
+            data.wouldYouBeAbleToHelpToLoadTheCarDelivered || '',
     };
 
     const handleSubmit = (values: any, props: any) => {
         console.log(values);
-
+        setStep2(JSON.stringify(values));
         setActiveStep(2);
-        props.resetForm();
     };
 
     return (
@@ -95,8 +99,6 @@ const LoadFormComponent = (props: any) => {
                         wouldYouBeAbleToHelpToLoadTheCarPickup,
                         wouldYouBeAbleToHelpToLoadTheCarDelivered,
                     } = props.values;
-
-                    console.log(props);
 
                     return (
                         <Form>
@@ -130,17 +132,17 @@ const LoadFormComponent = (props: any) => {
                                             id="route-side-select"
                                             label={t('form.houseType')}
                                             value={houseType}
-                                            onChange={val =>
+                                            onChange={val => {
                                                 props.setFieldValue(
                                                     'houseType',
                                                     val.target.value
-                                                )
-                                            }
+                                                );
+                                            }}
                                             error={!!props.errors.houseType}
                                         >
                                             {houseTypes?.map(type => (
                                                 <MenuItem
-                                                    key={type.key}
+                                                    key={type.title}
                                                     value={type.key}
                                                 >
                                                     {type.title}

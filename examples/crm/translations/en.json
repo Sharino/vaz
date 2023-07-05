@@ -1,16 +1,31 @@
 {
+    "countries": {
+        "no": "Norway",
+        "lt": "Lithuania"
+    },
     "general": {
         "language": "Language",
         "shortDescription": "Short description"
     },
     "form": {
+        "required": "Required!",
         "title": "Get an offer for relocation assistance",
+        "address": {
+            "country": "Country",
+            "street": "Street",
+            "houseNum": "House num",
+            "flatNum": "Flat num",
+            "city": "City",
+            "postCode": "Post code",
+            "comment": "Comment"
+        },
         "navigation": {
             "general": "General",
             "load": "Package",
             "address": "Address",
             "back": "Back",
-            "next": "Next"
+            "next": "Next",
+            "send": "Send request"
         },
         "deliveryType": {
             "label": "What type of cargo do you need to transport?",

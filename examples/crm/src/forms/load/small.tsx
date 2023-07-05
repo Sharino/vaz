@@ -49,30 +49,29 @@ const FormField = ({ label, children }: { label: string; children: any }) => {
 
 const LoadFormComponent = (props: any) => {
     const { t } = props;
-    const [data, setData] = useLocalStorage('step1', '');
+    const [step2, setStep2] = useLocalStorage('step2', '');
     const { activeStep, setActiveStep } = useContext(NavigationContext);
 
     const [isFlammable, setIsFlammable] = useState(false);
-
-    const initialValue = {
-        description: '',
-        sizeL: '',
-        sizeB: '',
-        sizeW: '',
-        weight: '',
-    };
+    const [data, setData] = useState(JSON.parse(step2));
 
     const handleSubmit = (values: any, props: any) => {
         console.log(values);
 
+        setStep2(JSON.stringify(values));
         setActiveStep(2);
-        props.resetForm();
     };
 
     return (
         <>
             <Formik
-                initialValues={initialValue}
+                initialValues={{
+                    description: data.description || '',
+                    sizeL: data.sizeL || '',
+                    sizeB: data.sizeB || '',
+                    sizeW: data.sizeW || '',
+                    weight: data.weight || '',
+                }}
                 validationSchema={YupValidation(t)}
                 onSubmit={handleSubmit}
             >
@@ -84,7 +83,6 @@ const LoadFormComponent = (props: any) => {
                         sizeW,
                         weight,
                     } = props.values;
-                    console.log(props);
 
                     return (
                         <Form>

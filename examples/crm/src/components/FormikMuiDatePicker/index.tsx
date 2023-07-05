@@ -1,5 +1,6 @@
 // components/MuiDatePicker.tsx
-import { DatePicker, DatePickerProps } from '@mui/x-date-pickers';
+import { Box } from '@mui/material';
+import { DateField, DatePicker, DatePickerProps } from '@mui/x-date-pickers';
 import { useField, useFormikContext } from 'formik';
 
 // Add a name property and reuse the date picker props.
@@ -12,8 +13,25 @@ const FormikMuiDatePicker = <TDate,>({ name, ...props }: Props<TDate>) => {
     const [field, meta] = useField(name);
     const { setFieldValue } = useFormikContext();
     return (
-        <div className="form-control w-full max-w-xs">
-            <DatePicker
+        <Box
+            sx={{
+                flex: 1,
+            }}
+        >
+            <DateField
+                fullWidth
+                value={field.value}
+                onChange={val => setFieldValue(name, val)}
+                slotProps={{
+                    textField: {
+                        size: 'small',
+                        helperText: meta.error,
+                        error: !!meta.error,
+                    },
+                }}
+                {...props}
+            />
+            {/* <DatePicker
                 {...props}
                 // use the DatePicker component override the value formik state value
                 value={field.value}
@@ -28,8 +46,8 @@ const FormikMuiDatePicker = <TDate,>({ name, ...props }: Props<TDate>) => {
                         error: !!meta.error,
                     },
                 }}
-            />
-        </div>
+            /> */}
+        </Box>
     );
 };
 
